@@ -1,4 +1,4 @@
-start :- pytaj, !, stworz_dynamiczne, !, analiza, !.
+start :- set_stream(current_output, tty(true)),pytaj, !, stworz_dynamiczne, !, analiza, !.
        
 /*  --------------------     PYTAJ     -------------------------------- */
        
