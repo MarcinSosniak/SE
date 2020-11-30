@@ -2,6 +2,7 @@ import os
 import subprocess
 import threading
 import sys
+import time
 from shareble_message_storage import ShareableCharacterStorage
 
 SWI_PROLOG_PATH = 'C:\\Program Files\\swipl\\bin\\swipl.exe'
@@ -52,5 +53,7 @@ try:
     while True:
         if global_sms.f_new_data():
             print('recieved : ' + global_sms.read_data())
+        else:
+            time.sleep(0.05)
 except KeyboardInterrupt:
     sys.exit(0)

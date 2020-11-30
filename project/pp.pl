@@ -5,40 +5,40 @@ start :- set_stream(current_output, tty(true)),pytaj, !, stworz_dynamiczne, !, a
 pytaj :-  pytaj_o_plec, pytaj_o_wiek, pytaj_o_rodzaj_skory, pytaj_o_krem_przeciwsloneczny, pytaj_o_ilosc_kremow, pytaj_o_problemy_skorne.
          
          
-pytaj_o_plec :- format('Podaj swoja plec.'), read(ODP_PLEC), asserta(plec(ODP_PLEC)).
+pytaj_o_plec :- format('Podaj swoja plec?[kobieta;mezczyzna]'), read(ODP_PLEC), asserta(plec(ODP_PLEC)).
 kobieta :- plec(kobieta).
 mezczyna :- plec(mezczyzna).
 
 
-pytaj_o_wiek :- format('W jakim jestes wieku?'), read(ODP_WIKE), asserta(wiek(ODP_WIKE)).
+pytaj_o_wiek :- format('W jakim jestes wieku?[NUM]'), read(ODP_WIKE), asserta(wiek(ODP_WIKE)).
 nastolatek :- (wiek(N) , N < 20, N > 10).
 mlody_dorosly :- (wiek(N) , N < 30, N > 19).
 dorosly :- (wiek(N) , N < 50, N > 20).
 dojrzaly :- (wiek(N) , N > 49).
 
 
-pytaj_o_rodzaj_skory :- format('Jaki masz rodzaj skory? '), read(ODP_SKORA), asserta(skora(ODP_SKORA)).       
+pytaj_o_rodzaj_skory :- format('Jaki masz rodzaj skory?[normalna;mieszana;sucha;tlusta]'), read(ODP_SKORA), asserta(skora(ODP_SKORA)).
 normalna_skora :- skora(normalna).
 mieszana_skora :- skora(mieszana).
 sucha_skora :- skora(sucha).
 tlusta_skora :- skora(tlusta).
 
 
-pytaj_o_krem_przeciwsloneczny :- format('Czy uzywasz kremu przeciwsłonecznego?'), read(ODP_KREM_SPF), asserta(krem_przeciwsloneczny(ODP_KREM_SPF)), 
+pytaj_o_krem_przeciwsloneczny :- format('Czy uzywasz kremu przeciwsłonecznego?[tak;nie]'), read(ODP_KREM_SPF), asserta(krem_przeciwsloneczny(ODP_KREM_SPF)),
                                  pytaj_o_wysokosc_filtru(ODP_KREM_SPF).       
                                 
 pytaj_o_wysokosc_filtru(nie) :- true.
-pytaj_o_wysokosc_filtru(tak) :- format('Jak wysoki filtr stosujesz? Podaj faktor.'), read(ODP_FILTR), asserta(faktor(ODP_FILTR)).
+pytaj_o_wysokosc_filtru(tak) :- format('Jak wysoki filtr stosujesz? Podaj faktor.[NUM]'), read(ODP_FILTR), asserta(faktor(ODP_FILTR)).
 
 
-pytaj_o_ilosc_kremow :- format('Ilu kremow uzwalas?'), read(ILOSC_KREMOW), pytaj_o_kremy(ILOSC_KREMOW).
+pytaj_o_ilosc_kremow :- format('Ilu kremow uzwalas?[LISTING_WTIH_NUM]'), read(ILOSC_KREMOW), pytaj_o_kremy(ILOSC_KREMOW).
 pytaj_o_kremy(0) :- true.
 pytaj_o_kremy(1) :- pytaj_o_krem.
 pytaj_o_kremy(N) :- pytaj_o_krem, N1 is N-1, pytaj_o_kremy(N1).
 pytaj_o_krem :- format('podaj nazwe kremu?'), read(NAZWA_KREMU), format('dzialal?'), read(CZY_DZIALAL), asserta(uzywany_krem(NAZWA_KREMU, CZY_DZIALAL)).
 
 
-pytaj_o_problemy_skorne :- format('Czy masz jakies probemy skorne, ktore chcesz wyelminowac'), read(ODP_PROBLEMY), asserta(problemy(ODP_PROBLEMY)), 
+pytaj_o_problemy_skorne :- format('Czy masz jakies probemy skorne, ktore chcesz wyelminowac?[tak;nie]'), read(ODP_PROBLEMY), asserta(problemy(ODP_PROBLEMY)),
                            dopytaj_o_problemy_skorne(ODP_PROBLEMY). 
                                                   
 dopytaj_o_problemy_skorne(nie) :- true.
@@ -49,32 +49,32 @@ pytaj_o_tradzik_jesli_natolatek_badz_mlody_dorosly :- mlody_dorosly, pytaj_o_tra
 pytaj_o_tradzik_jesli_natolatek_badz_mlody_dorosly :- true. 
 
 
-pytaj_o_tradzik :- format('Czy zmagasz sie z tradzikiem?'), read(ODP_TRADZIK), asserta(tradzik(ODP_TRADZIK)), dopytaj_o_tradzik(ODP_TRADZIK).
+pytaj_o_tradzik :- format('Czy zmagasz sie z tradzikiem?[tak;nie]'), read(ODP_TRADZIK), asserta(tradzik(ODP_TRADZIK)), dopytaj_o_tradzik(ODP_TRADZIK).
 
 dopytaj_o_tradzik(nie) :- true.
 dopytaj_o_tradzik(tak) :- znajdz_podloze_tradziku, pytaj_o_substancje_do_walki_z_tradzikiem.
 
 znajdz_podloze_tradziku :- pytaj_o_alergie, pytaj_o_problemy_hormonalne.
 
-pytaj_o_alergie :- format('Czy masz stwierdzone  alergie?'), read(ODP_ALERGIE), asserta(stwierdzone_alergie(ODP_ALERGIE)), 
+pytaj_o_alergie :- format('Czy masz stwierdzone  alergie?[tak;nie]'), read(ODP_ALERGIE), asserta(stwierdzone_alergie(ODP_ALERGIE)),
                    dopytaj_o_alergie(ODP_ALERGIE).
                    
 dopytaj_o_alergie(tak) :- true.
-dopytaj_o_alergie(nie) :- format('Czy odczuwasz czasem bol brzucha po posilku?'), read(ODP_PROBLEMY_GASTRYCZNE), 
+dopytaj_o_alergie(nie) :- format('Czy odczuwasz czasem bol brzucha po posilku?[tak;nie]'), read(ODP_PROBLEMY_GASTRYCZNE),
                           asserta(mozliwe_problemy_gastryczne(ODP_PROBLEMY_GASTRYCZNE)).
 
 
-pytaj_o_problemy_hormonalne :- format('Czy masz stwierdzone problemy hormonalne?'), read(ODP_HORMONY), asserta(problemy_hormonalne(ODP_HORMONY)),
+pytaj_o_problemy_hormonalne :- format('Czy masz stwierdzone problemy hormonalne?[tak;nie]'), read(ODP_HORMONY), asserta(problemy_hormonalne(ODP_HORMONY)),
                                dopytaj_o_hormony(ODP_HORMONY).
                                
 dopytaj_o_hormony(tak) :- true.                      
-dopytaj_o_hormony(nie) :- format('Czy masz hustawki nastroju albo nadmierne owlosienie?'), read(ODP_MOZLIWE_PR_HORMONALNE), 
+dopytaj_o_hormony(nie) :- format('Czy masz hustawki nastroju albo nadmierne owlosienie?[tak;nie]'), read(ODP_MOZLIWE_PR_HORMONALNE),
                           asserta(mozliwe_problemy_hormonalne(ODP_MOZLIWE_PR_HORMONALNE)).
 
-pytaj_o_substancje_do_walki_z_tradzikiem :- format('Czy uzywales nadlenku benzoilu?'), read(ODP_SUB1), asserta(nadlenek_benzoilu(ODP_SUB1)),
-                                            format('Czy uzywales kwasu salicylowego?'), read(ODP_SUB2), asserta(kwas_salicylowy(ODP_SUB2)),
-                                            format('Czy uzywales retonodiow?'), read(ODP_SUB4), asserta(retinoidy(ODP_SUB4)),
-                                            format('Czy uzywales antybiotyk doustnych?'), read(ODP_SUB3), asserta(antybiotyki_doustne(ODP_SUB3)).
+pytaj_o_substancje_do_walki_z_tradzikiem :- format('Czy uzywales nadlenku benzoilu?[tak;nie]'), read(ODP_SUB1), asserta(nadlenek_benzoilu(ODP_SUB1)),
+                                            format('Czy uzywales kwasu salicylowego?[tak;nie]'), read(ODP_SUB2), asserta(kwas_salicylowy(ODP_SUB2)),
+                                            format('Czy uzywales retonodiow?[tak;nie]'), read(ODP_SUB4), asserta(retinoidy(ODP_SUB4)),
+                                            format('Czy uzywales antybiotyk doustnych?[tak;nie]'), read(ODP_SUB3), asserta(antybiotyki_doustne(ODP_SUB3)).
 
 
 /*  --------------------     ANALIZA     -------------------------------- */
