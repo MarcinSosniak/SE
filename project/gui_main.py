@@ -139,9 +139,11 @@ def create_serums_reading(window,question):
 
 
 def create_reading_row(window,str_in):
+    str_in = str_in.replace('nie_wiem', 'nie wiem')
     answers_list_or_type_begin = str_in.find('[')
     question = str_in[:answers_list_or_type_begin]
     answers_list_or_type = str_in[answers_list_or_type_begin+1:-1]
+
     if ';' in answers_list_or_type:
         return create_normal_reading_row(window,question,answers_list_or_type.split(';'))
     elif answers_list_or_type == 'NUM':

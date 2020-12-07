@@ -2,8 +2,9 @@ start :- set_stream(current_output, tty(true)), pytaj, !, stworz_dynamiczne, !, 
        
 /*  --------------------     PYTAJ     -------------------------------- */
        
-pytaj :-  pytaj_o_plec, pytaj_o_wiek, pytaj_o_rodzaj_skory, pytaj_o_krem_przeciwsloneczny, pytaj_o_ilosc_kremow, pytaj_o_problemy_skorne.
-         
+pytaj :-  pytaj_o_plec, pytaj_o_wiek, pytaj_o_rodzaj_skory, pytaj_o_krem_przeciwsloneczny, pytaj_o_ilosc_kremow,
+          pytaj_o_problemy_skorne, pytaj_o_diete.
+
          
 pytaj_o_plec :- format('Jaką masz płeć?[kobieta;meżczyzna]'), read(ODP_PLEC), asserta(plec(ODP_PLEC)).
 kobieta :- plec(kobieta).
@@ -89,10 +90,51 @@ dopytaj_o_hormony(tak) :- true.
 dopytaj_o_hormony(nie) :- format('Czy masz huśtawki nastroju albo nadmierne owłosienie?[tak;nie]'), read(ODP_MOZLIWE_PR_HORMONALNE),
                           asserta(mozliwe_problemy_hormonalne(ODP_MOZLIWE_PR_HORMONALNE)).
 
-pytaj_o_substancje_do_walki_z_tradzikiem :- format('Czy używalaś/eś nadlenku benzoilu?[tak;nie]'), read(ODP_SUB1), asserta(nadlenek_benzoilu(ODP_SUB1)),
-                                            format('Czy używalaś/eś kwasu salicylowego?[tak;nie]'), read(ODP_SUB2), asserta(kwas_salicylowy(ODP_SUB2)),
-                                            format('Czy używalaś/eś retonodiow?[tak;nie]'), read(ODP_SUB4), asserta(retinoidy(ODP_SUB4)),
-                                            format('Czy używalaś/eś antybiotyk doustnych?[tak;nie]'), read(ODP_SUB3), asserta(antybiotyki_doustne(ODP_SUB3)).
+pytaj_o_substancje_do_walki_z_tradzikiem :- pytaj_o_nadlenek_benzoilu, pytaj_o_kwas_salicylowy,
+                                            pytaj_o_retinoidy, pytaj_o_antybiotyki_doustne.
+
+pytaj_o_nadlenek_benzoilu :- format('Czy używalaś/eś nadlenku benzoilu?[tak;nie;nie_wiem]'),
+                             read(ODP_SUB1), asserta(nadlenek_benzoilu(ODP_SUB1)), dopytaj_o_nadlenek_benzoilu(ODP_SUB1).
+
+dopytaj_o_nadlenek_benzoilu(tak) :- true.
+dopytaj_o_nadlenek_benzoilu(nie) :- true.
+dopytaj_o_nadlenek_benzoilu(nie_wiem) :- format('Czy używalaś/eś chociaż jednego z tych preparatów: neutrogena rapid clear, stubborn acne spot, epiduo?[tak;nie]'),
+                                         read(ODP_NADLETNEK_BENZOILU_PREPARATY),
+                                         asserta(nadlenek_benzoilu_preparaty(ODP_NADLETNEK_BENZOILU_PREPARATY)).
+
+
+pytaj_o_kwas_salicylowy :- format('Czy używalaś/eś kwasu salicylowego?[tak;nie]'),
+                           read(ODP_SUB2), asserta(kwas_salicylowy(ODP_SUB2)).
+
+pytaj_o_retinoidy :- format('Czy używalaś/eś retonodiow?[tak;nie;nie_wiem]'),
+                     read(ODP_SUB4), asserta(retinoidy(ODP_SUB4)), dopytaj_o_retinoidy(ODP_SUB4).
+
+dopytaj_o_retinoidy(tak) :- true.
+dopytaj_o_retinoidy(nie) :- true.
+dopytaj_o_retinoidy(nie_wiem) :- format('Czy używalaś/eś chociaż jednego z tych preparatów: differin gel, epiduo, aknemycin?[tak;nie]'),
+                                 read(ODP_RETINOIDY_PREPARATY),
+                                 asserta(retinoidy_preparaty(ODP_RETINOIDY_PREPARATY)).
+
+
+pytaj_o_antybiotyki_doustne :- format('Czy używalaś/eś antybiotyk doustnych?[tak;nie;nie_wiem]'),
+                               read(ODP_SUB3), asserta(antybiotyki_doustne(ODP_SUB3)).
+
+
+/* dieta i witaminy */
+pytaj_o_diete :- pytaj_o_weganizm, pytaj_o_cynk, pytaj_o_żelazo.
+
+pytaj_o_weganizm :- format('Czy jesteś na diecie wegańskiej?[tak;nie]'), read(WEGAZNIM), asserta(weganizm(WEGAZNIM)),
+                    dopytaj_o_witamine_b12(WEGAZNIM).
+
+dopytaj_o_witamine_b12(nie) :- true.
+dopytaj_o_witamine_b12(tak) :- format('Czy suplementujesz witaminę B12?[tak;nie]'), read(WITAMINA_B12), asserta(witamina_b12(WITAMINA_B12)).
+
+
+pytaj_o_cynk :- format('Czy Twoja dieta obfituje w cynk (źródła to np. wątróbka, jaja, kasza gryczana)?[tak;nie]'),
+                read(CYNK), asserta(cynk(CYNK)).
+
+pytaj_o_żelazo :-  format('Czy Twoja dieta obfituje w żelazo (źródła to np. czerwone mięso, natka pietruszki)?[tak;nie]'),
+                   read(ZELAZO), asserta(zelazo(ZELAZO)).
 
 
 /*  --------------------     ANALIZA     -------------------------------- */
@@ -124,8 +166,12 @@ polecana_substancja(retinol, tak) :- dorosly, !.
 polecana_substancja(retinol, tak) :- dojrzaly.
 
 /* poleć substacje do walki z trądzikiem. */
-polecana_substancja(retinoidy, tak) :- retinoidy(nie).
-polecana_substancja(nadlenek_benzoilu, tak) :- nadlenek_benzoilu(nie).
+polecana_substancja(retinoidy, tak) :- retinoidy(nie), !.
+polecana_substancja(retinoidy, tak) :- retinoidy(nie_wiem), retinoidy_preparaty(nie).
+
+polecana_substancja(nadlenek_benzoilu, tak) :- nadlenek_benzoilu(nie), !.
+polecana_substancja(nadlenek_benzoilu, tak) :- nadlenek_benzoilu(nie_wiem), nadlenek_benzoilu_preparaty(nie).
+
 polecana_substancja(antybiotyki_doustne, tak) :- antybiotyki_doustne(nie).
 polecana_substancja(kwas_salicylowy, tak) :- kwas_salicylowy(nie).
 
@@ -152,24 +198,21 @@ odpowiedz('Możesz wypróbować antybiotyki doustne do walki z tradzikiem.') :- 
 odpowiedz('Skontaktuj sie z dermatologiem w sprawie tradziku. Twoj przypadek jest skomplikowany.') :- uzywana_substancja(retinoidy, tak), 
                                                                                                       uzywana_substancja(kwas_salicylowy, tak),
                                                                                                       uzywana_substancja(nadlenek_benzoilu, tak),
-                                                                                                      uzywana_substancja(antybiotyki_doustne, tak),
-                                                                                                      stwierdzone_alergie(nie), 
-                                                                                                      problemy_hormonalne(nie), 
-                                                                                                      mozliwe_problemy_hormonalne(nie), 
-                                                                                                      mozliwe_problemy_gastryczne(nie).                                                                
+                                                                                                      uzywana_substancja(antybiotyki_doustne, tak).
 
 odpowiedz('Zrezygnuj z substancji zapachowym w kremach. Mogą Cie uczulać') :- zrezygnuj_z_substancji_zapachowych.
 odpowiedz('Nie zapominaj o kremie przeciwsłonecznym, jeśli chcesz zachować jak nadłużej młody wygląd.') :- krem_przeciwsloneczny(nie).
 odpowiedz('Dobrze, że używasz kremu przeciwsłonecznego z wysokim filtrem!') :- krem_przeciwsloneczny(tak), (faktor(N) , N > 49).
 odpowiedz('Nie zapomnij o kremie z wysokim filtrem w okresie letnim!') :- krem_przeciwsloneczny(tak), (faktor(N) , N < 50).
 
-odpowiedz('Wypróbuj serum z witaminą C w celu uszczelnienia naczyń krwionośnych.') :- polecana_substancja(witamina_c, tak
+odpowiedz('Wypróbuj serum z witaminą C w celu uszczelnienia naczyń krwionośnych.') :- polecana_substancja(witamina_c, tak).
 odpowiedz('Jeśli serum z witaminą C nie zadziała wypróbuj zabiegi laserowe w celu redukcji rumienia.') :- polecane_zabiegi_laserowe(tak),
                                                                                                           serum_C(nie).
-
 odpowiedz('Twój rumień wymaga redukcji laserowej.') :- polecane_zabiegi_laserowe(tak), serum_C(tak).
 
-
+odpowiedz('Skoro jesteś na diecie wegańskiej nie zapominaj o suplementacji witaminy B12.') :- weganizm(tak), witamina_b12(nie).
+odpowiedz('W Twojej diecie brakuje żelaza. Dołącz do diety m.in. czerwone mięso, żółtka jaj, natkę pietruszki, sezam.') :- cynk(nie).
+odpowiedz('W Twojej diecie brakuje cynku. Dołącz do diety m.in. wątróbkę, kaszę gryczaną, pestki dyni, nasiona słonecznika.') :- zelazo(nie).
 
 
 
@@ -178,11 +221,15 @@ usun_fakty :- retractall(plec(_)), retractall(wiek(_)), retractall(skora(_)), re
               retractall(faktor(_)), retractall(tradzik(_)), retractall(problemy(_)), retractall(nadlenek_benzoilu(_)),
               retractall(kwas_salicylowy(_)), retractall(antybiotyki_doustne(_)), retractall(stwierdzone_alergie(_)), retractall(problemy_hormonalne(_)), retractall(retinoidy(_)),
               retractall(mozliwe_problemy_hormonalne(_)), retractall(mozliwe_problemy_gastryczne(_)),
-              retractall(serum_C(_)), retractall(laser_rumien(_)), retractall(naczynka(_)).
+              retractall(serum_C(_)), retractall(laser_rumien(_)), retractall(naczynka(_)),
+              retractall(weganizm(_)), retractall(witamina_b12(_)), retractall(cynk(_)), retractall(zelazo(_)),
+              retractall(nadlenek_benzoilu_preparaty(_)), retractall(retinoidy_preparaty(_)).
 
 stworz_dynamiczne :- assertz(plec(xx)), assertz(skora(xx)), assertz(krem_przeciwsloneczny(xx)), 
                      assertz(uzywany_krem(xx,xx)),
                      assertz(tradzik(xx)), assertz(problemy(xx)), assertz(nadlenek_benzoilu(xx)),
                      assertz(kwas_salicylowy(xx)), assertz(antybiotyki_doustne(xx)), assertz(stwierdzone_alergie(xx)), assertz(problemy_hormonalne(xx)),
                      assertz(mozliwe_problemy_hormonalne(xx)), assertz(mozliwe_problemy_gastryczne(xx)), assertz(retinoidy(xx)),
-                     assertz(serum_C(xx)), assertz(laser_rumien(xx)), assertz(naczynka(xx)).
+                     assertz(serum_C(xx)), assertz(laser_rumien(xx)), assertz(naczynka(xx)),
+                     assertz(weganizm(xx)), assertz(witamina_b12(xx)), assertz(cynk(xx)), assertz(zelazo(xx)),
+                     assertz(nadlenek_benzoilu_preparaty(xx)), assertz(retinoidy_preparaty(xx)).

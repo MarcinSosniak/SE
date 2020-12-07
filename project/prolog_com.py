@@ -75,6 +75,9 @@ class PrologMessenger():
     def send(self,message,timeout=2):
         if not self._fReady:
             raise IllegalStateException('Connection not ready')
+        print("message to send: ", message)
+        if message == 'nie wiem':
+            message = 'nie_wiem'
         self._send_queue.put(message, timeout=timeout)
         if self._verbose:
             print('Sending')
