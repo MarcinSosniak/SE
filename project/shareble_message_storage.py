@@ -48,7 +48,7 @@ class ShareableCharacterStorage:
                 over_last_data_index=k
                 break
 
-        out = ''.join(list(map(lambda x: x[1].decode(sys.stdout.encoding) if self._byte_in else x[1], self._data[:over_last_data_index])))
+        out = ''.join(list(map(lambda x: x[1].decode("utf-8") if self._byte_in else x[1], self._data[:over_last_data_index])))
         self._data = self._data[over_last_data_index:]
         self._retrieved_combined_data.append(out)
 

@@ -33,17 +33,17 @@ class Serums_window:
 
     def _draw_buttons(self):
         add_new_line_button = Button(master=self._window,text='dodaj nowy krem',command = lambda : self._add_new_option())
-        confirm = Button(master=self._window, text='potwierdz', command=lambda: self._confirm())
-        label = Label(master=self._window,text='Dodaj kremy ktorych uzywales/as')
+        confirm = Button(master=self._window, text='potwierdź', command=lambda: self._confirm())
+        label = Label(master=self._window,text='   Dodaj kremy   ')
         add_new_line_button.grid(row = 0, column =0)
         label.grid(row=0, column=1, columnspan=4)
         confirm.grid(row = 0, column =5)
 
     def _add_new_option(self):
-        label1 = Label(master=self._window,text='Jakiego kremu używałeś?')
+        label1 = Label(master=self._window,text='Jakiego kremu używałaś/eś?')
         entry = Entry(master=self._window)
         label2 =  Label(master=self._window,text='Czy działał?')
-        yes_no_list = ['yes','no']
+        yes_no_list = ['tak','nie']
         variable = StringVar(self._window)
         variable.set(yes_no_list[1])
         option = OptionMenu(self._window,variable,*yes_no_list)
@@ -98,7 +98,7 @@ def create_normal_reading_row(window, question, answerlist):
     variable = StringVar(window)
     variable.set(answerlist[0])
     options = OptionMenu(window,variable,*answerlist)
-    button = Button(window, text='confirm',command = lambda :read_normal_reading_row(window,variable))
+    button = Button(window, text='potwierdź',command = lambda :read_normal_reading_row(window,variable))
     t.grid(row= 0, column  = 0,columnspan=2)
     options.grid(row= 0, column = 2)
     button.grid(row= 0, column = 3)
@@ -124,7 +124,7 @@ def read_num_reading_row(window,text_field_val):
 def create_num_reading_row(window,question):
     t = Label(text= question, master=window)
     entry = Entry(master = window)
-    button = Button(window, text='confirm',command = lambda :read_num_reading_row(window,entry.get()))
+    button = Button(window, text='potwierdź',command = lambda :read_num_reading_row(window,entry.get()))
     t.grid(row= 0, column  = 0,columnspan=2)
     entry.grid(row= 0, column = 2,columnspan=2)
     button.grid(row= 0, column = 4)
@@ -160,7 +160,8 @@ def if_end_response(message):
 
 
 def show_answer(window,message):
-    message = '\n'.join(message.split('\n')[:-1])
+    message = '\n'.join(message.split('\n')[:-3])
+    print(message)
     clear(window)
     t = Text(window, height=len(message.split('\n')), width=120)
     t.grid(row=0,column = 0)
@@ -187,28 +188,15 @@ def main_loop(window):
             window.update()
 
 
-
-
-
 def main():
     window = Tk()
-    window.title('expert dermatolog XD')
+    window.resizable(True, True)
+    window.title('Ekspert dermatolog')
     pm.send('start')
     pm.recieve()
     time.sleep(0.1)
     main_loop(window)
     window.mainloop()
-
-
-
-
-
-
-
-
-
-
-
 
 
 

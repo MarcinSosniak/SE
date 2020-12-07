@@ -57,8 +57,10 @@ class PrologMessenger():
 
     def set_up(self):
         self._proc = subprocess.Popen([SWI_PROLOG_PATH, PROLOG_FILE_PATH], bufsize=0, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8",
                                 universal_newlines=USE_UNIVERSAL_ENDLINES)
+
+
         to = threading.Thread(target=output_reader, args=(self._proc, self._sms))
         to.start()
         te = threading.Thread(target=error_reader, args=(self._proc, self._sms))
