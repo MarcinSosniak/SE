@@ -116,7 +116,7 @@ dopytaj_o_retinoidy(nie_wiem) :- format('Czy używalaś/eś chociaż jednego z t
                                  asserta(retinoidy_preparaty(ODP_RETINOIDY_PREPARATY)).
 
 
-pytaj_o_antybiotyki_doustne :- format('Czy używalaś/eś antybiotyk doustnych?[tak;nie;nie_wiem]'),
+pytaj_o_antybiotyki_doustne :- format('Czy używalaś/eś antybiotyk doustnych?[tak;nie]'),
                                read(ODP_SUB3), asserta(antybiotyki_doustne(ODP_SUB3)).
 
 
